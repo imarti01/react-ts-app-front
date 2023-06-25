@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { IRegisterUser } from '../../../interfaces/auth';
 import { InputWithLabel } from './InputWithLabel';
 import { Alert, Button, Typography } from '../Shared';
+import { registerRequest } from '../../../api/authRequests';
 
 export const Register = () => {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -9,16 +10,19 @@ export const Register = () => {
     username: '',
     email: '',
     password: '',
-    confirmPassword: '',
+    password_confirmation: '',
   });
 
   const handleFormData = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const onSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsAlertOpen(true);
+
+    const res = await registerRequest(formData);
+    console.log(res);
+    // setIsAlertOpen(true);
   };
 
   const handleCloseAlert = () => {
@@ -26,7 +30,7 @@ export const Register = () => {
   };
   return (
     <>
-      <form className="flex flex-col items-center justify-between w-64 h-96" onSubmit={onSubmitForm}>
+      <form className="flex flex-col items-center justify-between w-64 h-96" method="POST" onSubmit={onSubmitForm}>
         <Typography text="Register" type="title" />
         <InputWithLabel label="Username:" name="username" value={formData.username} onChange={handleFormData} />
         <InputWithLabel label="Email:" type="email" name="email" value={formData.email} onChange={handleFormData} />
@@ -40,8 +44,8 @@ export const Register = () => {
         <InputWithLabel
           label="Confirm Password:"
           type="password"
-          name="confirmPassword"
-          value={formData.confirmPassword}
+          name="password_confirmation"
+          value={formData.password_confirmation}
           onChange={handleFormData}
         />
         <Button color="primary" text="Sign Up" />
